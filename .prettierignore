@@ -1,0 +1,6 @@
+# Prettier Ignore File
+# See https://prettier.io/docs/en/ignore.html
+# Ignore artifacts:
+node_modules/
+dist/
+build/

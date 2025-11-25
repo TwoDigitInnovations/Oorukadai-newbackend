@@ -1,0 +1,5 @@
+# See https://eslint.org/docs/user-guide/configuring#ignoring-files-and-directories
+# Ignore artifacts:
+node_modules/
+dist/
+build/
