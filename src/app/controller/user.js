@@ -97,11 +97,11 @@ module.exports = {
         user.password = user.encryptPassword(req.body.password);
         await user.save();
 
-        await mailNotification.welcomeMail({
-          username: user?.username,
-          email: user?.email,
-          lastname: user?.lastname,
-        });
+        // await mailNotification.welcomeMail({
+        //   username: user?.username,
+        //   email: user?.email,
+        //   lastname: user?.lastname,
+        // });
 
         res.status(200).json({ success: true, data: user });
       }
