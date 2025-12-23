@@ -1994,10 +1994,10 @@ module.exports = {
 
       const cond = {
         user: req.user.id,
-        $or: [
-          { paymentStatus: { $in: ["Succeeded", "Paid"] } },
-          { paymentStatus: { $exists: false } },
-        ],
+        // $or: [
+        //   { paymentStatus: { $in: ["Succeeded", "Paid"] } },
+        //   { paymentStatus: { $exists: false } },
+        // ],
       };
 
       const products = await ProductRequest.find(cond)
