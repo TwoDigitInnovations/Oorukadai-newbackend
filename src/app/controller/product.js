@@ -1697,10 +1697,10 @@ module.exports = {
       const limit = parseInt(req.query.limit) || 10;
       const skip = (page - 1) * limit;
 
-      cond.$or = [
-        { paymentStatus: { $in: ["Succeeded", "Paid"] } },
-        { paymentStatus: { $exists: false } },
-      ];
+      // cond.$or = [
+      //   { paymentStatus: { $in: ["Succeeded", "Paid"] } },
+      //   { paymentStatus: { $exists: false } },
+      // ];
 
       const products = await ProductRequest.find(cond)
         .populate("user", "-password -varients")
