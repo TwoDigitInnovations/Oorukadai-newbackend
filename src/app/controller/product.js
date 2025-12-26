@@ -537,7 +537,7 @@ module.exports = {
   requestProduct: async (req, res) => {
     try {
       const payload = req?.body || {};
-      const storePrefix = "BHH";
+      const storePrefix = "OOR";
 
       const lastOrder = await ProductRequest.findOne()
         .sort({ createdAt: -1 })
@@ -569,9 +569,18 @@ module.exports = {
       payload.orderId = generatedOrderId;
       payload.orderTime = centralTime.toFormat("HH:mm");
       payload.orderDate = centralTime.toFormat("MM-dd-yyyy");
-      let user = await User.findById(req.user.id);
+      
+      // Handle guest orders
+      let user = null;
+      if (payload.isGuestOrder) {
+        // Guest order - no user lookup needed
+        console.log("Guest order:", payload.guestEmail);
+      } else {
+        // Regular user order
+        user = await User.findById(req.user.id);
+        console.log("user", user);
+      }
 
-      console.log("user", user);
       if (payload.isLocalDelivery || payload?.isShipmentDelivery) {
         let shipmetCosts = await ShippingCost.find();
 
@@ -692,16 +701,20 @@ module.exports = {
         console.log("abcd", coupan, isOnce);
         if (isOnce) {
           if (coupan) {
-            const alreadyUsed = coupan.userId?.some(
-              (id) => id.toString() === payload.user.toString()
-            );
+            // Only check coupon usage for logged-in users
+            if (payload.user) {
+              const alreadyUsed = coupan.userId?.some(
+                (id) => id.toString() === payload.user.toString()
+              );
 
-            if (alreadyUsed) {
-              return response.error(res, "User already used this coupon");
+              if (alreadyUsed) {
+                return response.error(res, "User already used this coupon");
+              }
+              coupan.userId.push(payload.user);
+              await coupan.save();
+              console.log("User ID added to coupon");
             }
-            coupan.userId.push(payload.user);
-            await coupan.save();
-            console.log("User ID added to coupon");
+            // Guest users can't use coupons (or handle differently)
           } else {
             return response.error(res, "Coupon not found");
           }
@@ -728,7 +741,7 @@ module.exports = {
       // Send email notification (non-blocking)
       try {
         await mailNotification.order({
-          email: req.body.Email,
+          email: req.body.Email || payload.guestEmail,
           orderId: newOrder.orderId,
         });
       } catch (emailError) {
@@ -736,17 +749,19 @@ module.exports = {
         // Continue without failing the order
       }
 
-      // Send push notification (non-blocking)
-      try {
-        await notify(
-          req.body.user,
-          "Order Placed",
-          `Your order with ID ${newOrder.orderId} has been received.`,
-          newOrder.orderId
-        );
-      } catch (notifyError) {
-        console.error("Push notification failed:", notifyError.message);
-        // Continue without failing the order
+      // Send push notification (non-blocking) - only for logged-in users
+      if (payload.user) {
+        try {
+          await notify(
+            req.body.user,
+            "Order Placed",
+            `Your order with ID ${newOrder.orderId} has been received.`,
+            newOrder.orderId
+          );
+        } catch (notifyError) {
+          console.error("Push notification failed:", notifyError.message);
+          // Continue without failing the order
+        }
       }
 
       return response.ok(res, {
@@ -762,7 +777,7 @@ module.exports = {
     try {
       const payload = req?.body || {};
 
-      const storePrefix = "BHH";
+      const storePrefix = "OOR";
 
       const lastOrder = await ProductRequest.findOne()
         .sort({ createdAt: -1 })
@@ -1994,10 +2009,10 @@ module.exports = {
 
       const cond = {
         user: req.user.id,
-        // $or: [
-        //   { paymentStatus: { $in: ["Succeeded", "Paid"] } },
-        //   { paymentStatus: { $exists: false } },
-        // ],
+        $or: [
+          { paymentStatus: { $in: ["Succeeded", "Paid", "Pending"] } },
+          { paymentStatus: { $exists: false } },
+        ],
       };
 
       const products = await ProductRequest.find(cond)
@@ -2200,19 +2215,19 @@ module.exports = {
       };
 
       // Header with modern design
-      drawRoundedRect(0, 0, doc.page.width, 100, 0, "#f38529");
+      drawRoundedRect(0, 0, doc.page.width, 100, 0, "#F9C60A");
 
       doc
         .fontSize(28)
         .fillColor("white")
         .font("Helvetica-Bold")
-        .text("Bach Hoa Houston", 50, 35, { align: "left" });
+        .text("Oorumittai", 50, 35, { align: "left" });
 
       doc
         .fontSize(12)
         .fillColor("white")
         .font("Helvetica")
-        .text("Shop Everyday Essentials at Bachhoahouston", 50, 65);
+        .text("Shop Everyday Essentials at Oorumittai", 50, 65);
 
       doc
         .fontSize(24)
@@ -2255,7 +2270,7 @@ module.exports = {
       // Customer information section
       doc
         .fontSize(14)
-        .fillColor("#f38529")
+        .fillColor("#F9C60A")
         .font("Helvetica-Bold")
         .text("BILL TO:", 50, 180);
 
@@ -2275,7 +2290,7 @@ module.exports = {
       if (order.Local_address) {
         doc
           .fontSize(14)
-          .fillColor("#f38529")
+          .fillColor("#F9C60A")
           .font("Helvetica-Bold")
           .text("DELIVER TO:", 300, 180);
 
@@ -2308,7 +2323,7 @@ module.exports = {
 
       // Table header with modern styling
       const tableTop = 300;
-      drawRoundedRect(50, tableTop, 500, 25, 3, "#f38529");
+      drawRoundedRect(50, tableTop, 500, 25, 3, "#F9C60A");
 
       doc
         .fontSize(12)
@@ -2350,8 +2365,8 @@ module.exports = {
           .fillColor("#2c3e50")
           .text(productName, 60, currentY + 8, { width: maxWidth })
           .text(item.qty.toString(), 300, currentY + 8)
-          .text(`$${parseFloat(item.price).toFixed(2)}`, 370, currentY + 8)
-          .text(`$${itemTotal.toFixed(2)}`, 470, currentY + 8);
+          .text(`INR ${parseFloat(item.price).toFixed(2)}`, 370, currentY + 8)
+          .text(`INR ${itemTotal.toFixed(2)}`, 470, currentY + 8);
 
         // Bottom border line
         doc
@@ -2380,28 +2395,28 @@ module.exports = {
         .fillColor("#2c3e50")
         .font("Helvetica")
         .text("Subtotal:", 370, totalsY)
-        .text(`$${subtotal.toFixed(2)}`, 470, totalsY);
+        .text(`INR ${subtotal.toFixed(2)}`, 470, totalsY);
 
       const tax = order.totalTax || 0;
       doc
         .text("Total Tax:", 370, totalsY + 20)
-        .text(`$${parseFloat(tax).toFixed(2)}`, 470, totalsY + 20);
+        .text(`INR ${parseFloat(tax).toFixed(2)}`, 470, totalsY + 20);
 
       const tip = order.Deliverytip || 0;
       doc
         .text("Delivery Tip:", 370, totalsY + 40)
-        .text(`$${parseFloat(tip).toFixed(2)}`, 470, totalsY + 40);
+        .text(`INR ${parseFloat(tip).toFixed(2)}`, 470, totalsY + 40);
 
       const deliveryFee = order.deliveryfee || 0;
       doc
         .text("Delivery Fee:", 370, totalsY + 60)
-        .text(`$${parseFloat(deliveryFee).toFixed(2)}`, 470, totalsY + 60);
+        .text(`INR ${parseFloat(deliveryFee).toFixed(2)}`, 470, totalsY + 60);
 
       const discount = order.discount || 0;
 
       doc
         .text("Discount:", 370, totalsY + 80)
-        .text(`-$${parseFloat(discount).toFixed(2)}`, 470, totalsY + 80);
+        .text(`-INR ${parseFloat(discount).toFixed(2)}`, 470, totalsY + 80);
 
       const totalAmount =
         order.totalAmount !== undefined && order.totalAmount !== null
@@ -2414,10 +2429,10 @@ module.exports = {
 
       doc
         .fontSize(14)
-        .fillColor("#f38529")
+        .fillColor("#F9C60A")
         .font("Helvetica-Bold")
         .text("Total:", 370, totalsY + 110)
-        .text(`$${parseFloat(totalAmount).toFixed(2)}`, 470, totalsY + 110);
+        .text(`INR ${parseFloat(totalAmount).toFixed(2)}`, 470, totalsY + 110);
 
       // Footer
       doc
@@ -2429,7 +2444,7 @@ module.exports = {
           width: 500,
         })
         .text(
-          "For support, contact us at contact@bachhoahouston.com",
+          "For support, contact us at support@Oorumittai.com",
           50,
           doc.page.height - 85,
           {
@@ -2438,7 +2453,7 @@ module.exports = {
           }
         )
         .text(
-          "Visit us at: https://www.bachhoahouston.com/",
+          "Visit us at: https://www.Oorumittai.com/",
           50,
           doc.page.height - 70,
           {
@@ -2454,7 +2469,7 @@ module.exports = {
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader(
         "Content-Disposition",
-        `attachment; filename=bachhoahouston-${orderId}.pdf`
+        `attachment; filename=oorukadai-invoice-${orderId}.pdf`
       );
 
       res.send(pdfBuffer);
@@ -2490,6 +2505,45 @@ module.exports = {
       return response.ok(res, updatedOrder);
     } catch (error) {
       console.error("Error assigning driver:", error);
+      return response.error(res, error);
+    }
+  },
+
+  // Guest order tracking
+  trackGuestOrder: async (req, res) => {
+    try {
+      const { orderId, email } = req.body;
+      
+      if (!orderId || !email) {
+        return response.error(res, "Order ID and email are required");
+      }
+
+      // Find order by orderId
+      const orderByIdOnly = await ProductRequest.findOne({
+        orderId: orderId
+      }).populate("user", "email username");
+
+      // Find order - support both guest and logged-in users
+      let order = null;
+      
+      if (orderByIdOnly) {
+        // Check if email matches
+        if (orderByIdOnly.isGuestOrder && orderByIdOnly.guestEmail === email) {
+          order = orderByIdOnly;
+        } else if (orderByIdOnly.user && orderByIdOnly.user.email === email) {
+          order = orderByIdOnly;
+        }
+      }
+
+      if (!order) {
+        return response.error(res, "Order not found or email doesn't match");
+      }
+
+      // Populate product details
+      await order.populate("productDetail.product", "-varients");
+
+      return response.ok(res, order);
+    } catch (error) {
       return response.error(res, error);
     }
   },
@@ -2604,6 +2658,7 @@ module.exports = {
       return response.error(res, error);
     }
   },
+
   acceptorderdriver: async (req, res) => {
     try {
       const product = await ProductRequest.findById(req.params.id);

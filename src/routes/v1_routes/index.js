@@ -2,6 +2,7 @@
 const router = require("express").Router();
 const user = require("../../app/controller/user");
 const isAuthenticated = require("../../middlewares/isAuthenticated");
+const optionalAuth = require("../../middlewares/optionalAuth");
 const blog = require("../../app/controller/blogs");
 const category = require("../../app/controller/category");
 const product = require("../../app/controller/product");
@@ -291,7 +292,7 @@ router.post(
 // product request
 router.post(
   "/createProductRquest",
-  isAuthenticated(["USER", "ADMIN", "EMPLOYEE"]),
+  optionalAuth, // Allow both authenticated and guest users
   product.requestProduct
 );
 
@@ -397,6 +398,12 @@ router.get(
   "/NewgetrequestProductbyuser",
   isAuthenticated(["USER", "ADMIN", "EMPLOYEE"]),
   product.NewgetrequestProductbyuser
+);
+
+// Guest order tracking
+router.post(
+  "/trackGuestOrder",
+  product.trackGuestOrder
 );
 
 router.post(

@@ -46,6 +46,23 @@ const productrequestchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: false, // Make optional for guest orders
+    },
+   
+    isGuestOrder: {
+      type: Boolean,
+      default: false,
+    },
+    guestEmail: {
+      type: String,
+      sparse: true, // Allow null values
+    },
+    guestPhone: {
+      type: String,
+      sparse: true,
+    },
+    guestName: {
+      type: String,
     },
     status: {
       type: String,
