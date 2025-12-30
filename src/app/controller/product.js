@@ -552,7 +552,7 @@ module.exports = {
         }
       }
 
-      const centralTime = DateTime.now().setZone("America/Chicago");
+      const centralTime = DateTime.now().setZone("Asia/Kolkata"); // India timezone
 
       const yy = String(centralTime.year).slice(2); // last 2 digits of year
       const mm = String(centralTime.month).padStart(2, "0");
@@ -792,7 +792,7 @@ module.exports = {
         }
       }
 
-      const centralTime = DateTime.now().setZone("America/Chicago");
+      const centralTime = DateTime.now().setZone("Asia/Kolkata"); // India timezone
 
       const yy = String(centralTime.year).slice(2); // last 2 digits of year
       const mm = String(centralTime.month).padStart(2, "0");

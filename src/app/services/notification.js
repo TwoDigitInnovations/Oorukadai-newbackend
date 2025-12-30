@@ -304,7 +304,7 @@ async function sendNotification(content, player_ids, title, track) {
     //     }
     //   ]
     // }
-    notification.name = "BachHoaHouston";
+    notification.name = "Oorumittai";
     return await client.createNotification(notification);
   } catch (err) {
     console.log("error in send notification", content);

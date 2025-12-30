@@ -7,7 +7,7 @@ const sendMailWithSubjectViaSendgrid = async (to, subject, html) => {
     const msg = {
         // to,
         from: {
-            name: 'Bach Hoa Houston',
+            name: 'Oorumittai',
             email: process.env.FROM_EMAIL
         }, // Use the email address or domain you verified above
         subject,
@@ -29,14 +29,14 @@ const sendMailWithSubjectViaSendgrid = async (to, subject, html) => {
     }
 }
 
-const sendMailWithSTemplateViaSendgrid = async (to, templateId, subject, data = { Name: 'Bach Hoa Houston' }) => {
+const sendMailWithSTemplateViaSendgrid = async (to, templateId, subject, data = { Name: 'Oorumittai' }) => {
     console.log(to, templateId, subject)
     const msg = {
         personalizations: to.map((email) => ({
             to: email,
         })),
         from: {
-            name: 'Bach Hoa Houston',
+            name: 'Oorumittai',
             email: process.env.FROM_EMAIL
         }, // Use the email address or domain you verified above // Use the email address or domain you verified above
         templateId,

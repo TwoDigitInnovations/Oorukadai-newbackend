@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 const sendMail = async (to, subject, html) => {
   return new Promise((resolve, reject) => {
     const mailConfigurations = {
-      from: `Bach Hoa Houston <${process.env.MAIL_USER}>`,
+      from: `Oorumittai <${process.env.MAIL_USER}>`,
       to,
       subject,
       html,
@@ -33,13 +33,13 @@ module.exports = {
       <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
         <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; padding: 20px; border: 1px solid #e0e0e0;">
           <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="color: #F38529;">Welcome to Bach Hoa Houston!</h2>
+            <h2 style="color: #F38529;">Welcome to Oorumittai!</h2>
             <p style="color: #777; font-size: 14px;">We're glad to have you on board</p>
           </div>
 
         <p>Dear ${username.username}${username?.lastname ? " " + username.lastname : ""},</p>
 
-          <p>Thank you for creating your account at <strong>Bach Hoa Houston</strong>. We’re excited to be your trusted destination for quality products and service.</p>
+          <p>Thank you for creating your account at <strong>Oorumittai</strong>. We’re excited to be your trusted destination for quality products and service.</p>
 
           <p><strong>Your registered email:</strong> ${username?.email}</p>
 
@@ -49,7 +49,7 @@ module.exports = {
 
           <p>If you have any questions, feel free to reach out to us. We're here to help!</p>
 
-          <p style="margin-top: 20px;">Best regards,<br/><strong style="color: #F38529;">The Bach Hoa Houston Team</strong></p>
+          <p style="margin-top: 20px;">Best regards,<br/><strong style="color: #F38529;">The Oorumittai Team</strong></p>
 
           <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #777; text-align: center;">
             <p>This is a system-generated email. Please do not reply to this message.</p>
@@ -58,7 +58,7 @@ module.exports = {
       </div>
     `;
 
-      await sendMail(username.email, "Welcome to Bach Hoa Houston!", html);
+      await sendMail(username.email, "Welcome to Oorumittai!", html);
     } catch (err) {
       console.error("Error sending welcome email:", err);
       throw new Error("Failed to send welcome email");
@@ -69,8 +69,8 @@ module.exports = {
     console.log(email, code);
     try {
       const html = `<div> \r\n<p>Hello,<\/p>\r\n\r\n<p> Welcome to <strong>
-      Bach Hoa Houston </strong>. <\/p>\r\n\r\n<p>Your One-Time password  code is: <strong>${code}</strong>. This passcode will expire in 5 minutes<\/p>\r\n<\/br>Thanks,<\/p>\r\n\r\n<p><b>
-      The Bach Hoa Houston Account Team<\/b><\/p><\/div>`;
+      Oorumittai </strong>. <\/p>\r\n\r\n<p>Your One-Time password  code is: <strong>${code}</strong>. This passcode will expire in 5 minutes<\/p>\r\n<\/br>Thanks,<\/p>\r\n\r\n<p><b>
+      The Oorumittai Account Team<\/b><\/p><\/div>`;
 
       return await sendMail(email, "Password Reset Instructions", html);
     } catch (err) {
@@ -89,7 +89,7 @@ module.exports = {
           <p>If you didn’t make this change or believe it was unauthorized, please contact support immediately.</p>
   
           <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;" />
-          <p style="font-size: 12px; color: #aaa;">&copy; ${new Date().getFullYear()} Bach Hoa Houston Team . All rights reserved.</p>
+          <p style="font-size: 12px; color: #aaa;">&copy; ${new Date().getFullYear()} Oorumittai Team . All rights reserved.</p>
         </div> `;
       return await sendMail(email, "PASSWORD RESET NOTIFICATION EMAIL", html);
     } catch (err) {
@@ -110,7 +110,7 @@ module.exports = {
           <p><strong>Car Brand:</strong> ${carBrand}</p>
           <p><strong>Car Color:</strong> ${carColor}</p>
           <p>Thank You,</p>
-          <p><strong>Bach Hoa Houston Team</strong></p>
+          <p><strong>Oorumittai Team</strong></p>
         </div>
       `;
       return await sendMail(
@@ -144,7 +144,7 @@ module.exports = {
                <strong style="color: #F38529;">Business Hours:</strong> 9AM - 8PM</p>
             </div>
             <p style="margin-top: 30px;">Thank You</p>
-            <p><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+            <p><strong style="color: #F38529;">Oorumittai Team</strong></p>
           </div>
         </div>
       `;
@@ -177,7 +177,7 @@ module.exports = {
             <strong style="color: #F38529;">Business Hours:</strong> 9AM - 8PM</p>
           </div>
           <p style="margin-top: 30px;">Thank you for shopping with us.</p>
-          <p><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
@@ -206,7 +206,7 @@ module.exports = {
             <strong style="color: #F38529;">Business Hours:</strong> 9AM - 8PM</p>
           </div>
           <p style="margin-top: 30px;">Thank you for shopping with us.</p>
-          <p><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
@@ -234,7 +234,7 @@ module.exports = {
               <strong style="color: #F38529;">Business Hours:</strong> 9AM - 8PM</p>
             </div>
             <p style="margin-top: 30px;">Thank you for shopping with us.</p>
-            <p><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+            <p><strong style="color: #F38529;">Oorumittai Team</strong></p>
           </div>
         </div>
       `;
@@ -260,7 +260,7 @@ module.exports = {
           </p>
            <p>We appreciate your business and look forward to serving you again!</p>
           <p style="margin-top: 30px;">Best regards,</p>
-          <p><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
@@ -289,7 +289,7 @@ module.exports = {
               <strong style="color: #F38529;">Phone:</strong> 832-230-9288</p>
             </div>
             <p style="margin-top: 30px;">If you have any questions, feel free to reach out to us.</p>
-            <p><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+            <p><strong style="color: #F38529;">Oorumittai Team</strong></p>
           </div>
         </div>
       `;
@@ -334,7 +334,7 @@ module.exports = {
       const html = `
         <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
           <div style="max-width: 600px; margin: auto; background: #fff; border-radius: 8px; padding: 20px; border: 1px solid #e0e0e0;">
-            <h2 style="color: #F38529;">Message from Bach Hoa Houston Team</h2>
+            <h2 style="color: #F38529;">Message from Oorumittai Team</h2>
             <p>Dear Customer,</p>
             <p>${message}</p>
   
@@ -346,7 +346,7 @@ module.exports = {
             </div>
   
             <p style="margin-top: 30px;">If you have any questions, feel free to contact our support.</p>
-            <p>Best regards,<br/><strong style="color: #F38529;>Bach Hoa Houston Team</strong></p>
+            <p>Best regards,<br/><strong style="color: #F38529;>Oorumittai Team</strong></p>
           </div>
         </div>
       `;
@@ -392,14 +392,14 @@ module.exports = {
           </div>
   
           <p style="margin-top: 30px;">Thank you for shopping with us!</p>
-          <p>Best regards,<br/><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p>Best regards,<br/><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
 
       return await sendMail(
         email,
-        "Your Order Has Been Shipped - Bach Hoa Houston",
+        "Your Order Has Been Shipped - Oorumittai",
         html
       );
     } catch (err) {
@@ -434,14 +434,14 @@ module.exports = {
           </div>
   
           <p style="margin-top: 30px;">Thank you for shopping with us!</p>
-          <p>Best regards,<br/><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p>Best regards,<br/><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
 
       return await sendMail(
         email,
-        "Your Order Has Been Shipped - Bach Hoa Houston",
+        "Your Order Has Been Shipped - Oorumittai",
         html
       );
     } catch (err) {
@@ -454,11 +454,11 @@ module.exports = {
       const html = `
       <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
         <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; border: 1px solid #ddd;">
-          <h2 style="color: #F38529; text-align: center;">Welcome to Bach Hoa Houston!</h2>
+          <h2 style="color: #F38529; text-align: center;">Welcome to Oorumittai!</h2>
 
           <p>Dear <strong>${name}</strong>,</p>
 
-          <p>We are pleased to welcome you to the <strong>Bach Hoa Houston Team</strong>. You are now officially part of our growing organization, and we’re excited to have you on board.</p>
+          <p>We are pleased to welcome you to the <strong>Oorumittai Team</strong>. You are now officially part of our growing organization, and we’re excited to have you on board.</p>
 
           <p>Please use the link below to access your employee dashboard and begin your journey with us:</p>
           <p>
@@ -468,7 +468,7 @@ module.exports = {
          </p>
 
           <div style="text-align: center; margin: 20px 0;">
-            <a href="https://www.admin.bachhoahouston.com/login" 
+            <a href="https://www.admin.Oorumittai.com/login" 
                style="background-color: #F38529; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
               Login to Admin Dashboard
             </a>
@@ -483,14 +483,14 @@ module.exports = {
           </div>
 
           <p style="margin-top: 30px;">We look forward to working with you!</p>
-          <p>Best regards,<br/><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p>Best regards,<br/><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
 
       return await sendMail(
         email,
-        "Welcome to Bach Hoa Houston – Your Employee Access",
+        "Welcome to Oorumittai – Your Employee Access",
         html
       );
     } catch (err) {
@@ -518,7 +518,7 @@ module.exports = {
           </div>
 
           <p style="margin-top: 20px;">Please reply to this email with photos or videos showing the issue with the product.</p>
-          <p>For full details, please refer to our <a href="https://www.bachhoahouston.com/ReturnPolicy" style="color: #F38529;">Return Policy</a>.</p>
+          <p>For full details, please refer to our <a href="https://www.Oorumittai.com/ReturnPolicy" style="color: #F38529;">Return Policy</a>.</p>
 
           <div style="margin-top: 30px; padding: 15px; background-color: #fef1e8; border-left: 4px solid #F38529;">
             <p><strong style="color: #F38529;">Address:</strong> 11360 Bellaire Blvd Suite 700,<br/>
@@ -527,7 +527,7 @@ module.exports = {
           </div>
 
           <p style="margin-top: 30px;">Thank you for shopping with us.</p>
-          <p><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
@@ -560,7 +560,7 @@ module.exports = {
           </div>
 
           <p style="margin-top: 20px;">Thank you for shopping with us. We hope you enjoy your purchase!</p>
-          <p>For more details, you can always refer to our <a href="https://www.bachhoahouston.com/ReturnPolicy" style="color: #F38529;">Return Policy</a>.</p>
+          <p>For more details, you can always refer to our <a href="https://www.Oorumittai.com/ReturnPolicy" style="color: #F38529;">Return Policy</a>.</p>
 
           <div style="margin-top: 30px; padding: 15px; background-color: #fef1e8; border-left: 4px solid #F38529;">
             <p><strong style="color: #F38529;">Address:</strong> 11360 Bellaire Blvd Suite 700,<br/>
@@ -568,7 +568,7 @@ module.exports = {
             <strong style="color: #F38529;">Phone:</strong> 832-230-9288</p>
           </div>
 
-          <p style="margin-top: 30px;"><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p style="margin-top: 30px;"><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
@@ -608,7 +608,7 @@ module.exports = {
             <strong style="color: #F38529;">Phone:</strong> 832-230-9288</p>
           </div>
 
-          <p style="margin-top: 30px;"><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p style="margin-top: 30px;"><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
@@ -643,7 +643,7 @@ module.exports = {
           </div>
 
           <p style="margin-top: 30px;">If you have any questions, feel free to reach out to us.</p>
-          <p><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
@@ -680,7 +680,7 @@ module.exports = {
           </div>
 
           <p style="margin-top: 30px;">If you have any questions or would like to make changes, please contact us.</p>
-          <p><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
@@ -724,7 +724,7 @@ module.exports = {
             
             <p style="margin-top: 25px;">Thank you for being our customer. If you have any questions, please don't hesitate to contact us.</p>
             
-            <p style="margin-top: 20px;">Best regards,<br/><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+            <p style="margin-top: 20px;">Best regards,<br/><strong style="color: #F38529;">Oorumittai Team</strong></p>
             
             <div style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #777; text-align: center;">
               <p>This is a system-generated email. Please do not reply to this message.</p>
@@ -787,7 +787,7 @@ module.exports = {
           </div>
 
           <p style="margin-top: 20px;">We appreciate your support for local delivery services. Thank you for shopping with us!</p>
-          <p>View our full <a href="https://www.bachhoahouston.com/ReturnPolicy" style="color: #F38529;">Return Policy</a> for more details.</p>
+          <p>View our full <a href="https://www.Oorumittai.com/ReturnPolicy" style="color: #F38529;">Return Policy</a> for more details.</p>
 
           <div style="margin-top: 30px; padding: 15px; background-color: #fef1e8; border-left: 4px solid #F38529;">
             <p><strong style="color: #F38529;">Address:</strong> 11360 Bellaire Blvd Suite 700,<br/>
@@ -795,7 +795,7 @@ module.exports = {
             <strong style="color: #F38529;">Phone:</strong> 832-230-9288</p>
           </div>
 
-          <p style="margin-top: 30px;"><strong style="color: #F38529;">Bach Hoa Houston Team</strong></p>
+          <p style="margin-top: 30px;"><strong style="color: #F38529;">Oorumittai Team</strong></p>
         </div>
       </div>
     `;
