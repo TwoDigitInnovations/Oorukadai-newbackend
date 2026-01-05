@@ -190,18 +190,27 @@ module.exports = {
       });
 
       const processedLineItems = [
-        ...line_items.map((item) => ({
-          ...item,
-          price_data: {
-            ...item.price_data,
-            tax_behavior: "exclusive",
-            product_data: {
-              ...item.price_data.product_data,
-              tax_code:
-                item.price_data?.product_data?.tax_code || "txcd_10000000",
+        ...line_items.map((item) => {
+          // Validate and fix tax_code
+          let taxCode = item.price_data?.product_data?.tax_code;
+          
+          // If tax_code is invalid (like '22'), use default
+          if (!taxCode || !taxCode.startsWith('txcd_')) {
+            taxCode = "txcd_10000000"; // Default: General - Tangible Goods
+          }
+          
+          return {
+            ...item,
+            price_data: {
+              ...item.price_data,
+              tax_behavior: "exclusive",
+              product_data: {
+                ...item.price_data.product_data,
+                tax_code: taxCode,
+              },
             },
-          },
-        })),
+          };
+        }),
         ...(deliveryTip > 0
           ? [
               {

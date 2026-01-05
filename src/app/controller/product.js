@@ -699,10 +699,12 @@ module.exports = {
         const coupan = await Coupon.findOne({ code: payload?.discountCode });
         const isOnce = coupan.ussageType === "once";
         console.log("abcd", coupan, isOnce);
-        if (isOnce) {
-          if (coupan) {
-            // Only check coupon usage for logged-in users
-            if (payload.user) {
+        
+        if (coupan) {
+          // Only check coupon usage for logged-in users
+          if (payload.user) {
+            if (isOnce) {
+              // For "once" type, check if already used
               const alreadyUsed = coupan.userId?.some(
                 (id) => id.toString() === payload.user.toString()
               );
@@ -710,14 +712,16 @@ module.exports = {
               if (alreadyUsed) {
                 return response.error(res, "User already used this coupon");
               }
-              coupan.userId.push(payload.user);
-              await coupan.save();
-              console.log("User ID added to coupon");
             }
-            // Guest users can't use coupons (or handle differently)
-          } else {
-            return response.error(res, "Coupon not found");
+            
+            // Add user to userId array for both "once" and "multiple" types
+            coupan.userId.push(payload.user);
+            await coupan.save();
+            console.log("User ID added to coupon");
           }
+          // Guest users can't use coupons (or handle differently)
+        } else {
+          return response.error(res, "Coupon not found");
         }
       }
       console.log("newOrder", newOrder);
@@ -899,8 +903,10 @@ module.exports = {
         const coupan = await Coupon.findOne({ code: payload?.discountCode });
         const isOnce = coupan.ussageType === "once";
         console.log("abcd", coupan, isOnce);
-        if (isOnce) {
-          if (coupan) {
+        
+        if (coupan) {
+          if (isOnce) {
+            // For "once" type, check if already used
             const alreadyUsed = coupan.userId?.some(
               (id) => id.toString() === payload.user.toString()
             );
@@ -908,12 +914,14 @@ module.exports = {
             if (alreadyUsed) {
               return response.error(res, "User already used this coupon");
             }
-            coupan.userId.push(payload.user);
-            await coupan.save();
-            console.log("User ID added to coupon");
-          } else {
-            return response.error(res, "Coupon not found");
           }
+          
+          // Add user to userId array for both "once" and "multiple" types
+          coupan.userId.push(payload.user);
+          await coupan.save();
+          console.log("User ID added to coupon");
+        } else {
+          return response.error(res, "Coupon not found");
         }
       }
 
