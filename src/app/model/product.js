@@ -123,13 +123,7 @@ const productchema = new mongoose.Schema(
     Warning: {
       type: String,
     },
-    isNextDayDeliveryAvailable: {
-      type: Boolean,
-    },
     isInStoreAvailable: {
-      type: Boolean,
-    },
-    isCurbSidePickupAvailable: {
       type: Boolean,
     },
     tax_code: {

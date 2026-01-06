@@ -14,6 +14,7 @@ const ContactUs = require("../../app/controller/feedback");
 const flashSaleController = require("../../app/controller/sale");
 const cron = require("node-cron");
 const stripe = require("../../app/controller/Stripe");
+const phonepe = require("../../app/controller/PhonePe");
 const setting = require("../../app/controller/setting");
 const shippingCostController = require("../../app/controller/ShippingCost");
 const pincodeController = require("../../app/controller/pincodes");
@@ -752,5 +753,25 @@ router.post(
   stripe.NewRetrieveCheckout
 );
 
+// PhonePe Payment Routes
+router.post(
+  "/phonepe-initiate",
+  optionalAuth,
+  phonepe.initiatePhonePePayment
+);
+router.post(
+  "/phonepe-status",
+  optionalAuth,
+  phonepe.checkPhonePeStatus
+);
+router.post(
+  "/phonepe-callback",
+  phonepe.phonePeCallback
+);
+router.post(
+  "/phonepe-cancel",
+  optionalAuth,
+  phonepe.cancelPhonePePayment
+);
 
 module.exports = router;

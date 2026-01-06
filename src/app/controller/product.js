@@ -23,17 +23,39 @@ module.exports = {
   createProduct: async (req, res) => {
     try {
       const payload = req?.body || {};
+      
+      // Validate required fields
+      if (!payload.name || payload.name.trim() === "") {
+        return response.error(res, { message: "Product name is required" });
+      }
+      
+      // Generate slug if not provided
       if (!payload.slug || payload.slug.trim() === "") {
         payload.slug = payload.name
           .toLowerCase()
           .replace(/ /g, "-")
           .replace(/[^\w-]+/g, "");
       }
+      
+      // Clean up boolean fields - convert empty strings to undefined
+      const booleanFields = [
+        'isShipmentAvailable',
+        'isInStoreAvailable',
+        'isReturnAvailable'
+      ];
+      
+      booleanFields.forEach(field => {
+        if (payload[field] === "" || payload[field] === null) {
+          delete payload[field];
+        }
+      });
+      
       let product = new Product(payload);
       await product.save();
 
       return response.ok(res, { message: "Product added successfully" });
     } catch (error) {
+      console.error("Error creating product:", error);
       return response.error(res, error);
     }
   },
@@ -479,18 +501,35 @@ module.exports = {
   updateProduct: async (req, res) => {
     try {
       const payload = req?.body || {};
-      if (!payload.slug || payload.slug.trim() === "") {
+      
+      // Validate name if provided
+      if (payload.name && (!payload.slug || payload.slug.trim() === "")) {
         payload.slug = payload.name
           .toLowerCase()
           .replace(/ /g, "-")
           .replace(/[^\w-]+/g, "");
       }
+      
+      // Clean up boolean fields - convert empty strings to undefined
+      const booleanFields = [
+        'isShipmentAvailable',
+        'isInStoreAvailable',
+        'isReturnAvailable'
+      ];
+      
+      booleanFields.forEach(field => {
+        if (payload[field] === "" || payload[field] === null) {
+          delete payload[field];
+        }
+      });
+      
       let product = await Product.findByIdAndUpdate(payload?.id, payload, {
         new: true,
         upsert: true,
       });
       return response.ok(res, product);
     } catch (error) {
+      console.error("Error updating product:", error);
       return response.error(res, error);
     }
   },
@@ -694,6 +733,8 @@ module.exports = {
 
       const newOrder = new ProductRequest(payload);
       newOrder.orderId = generatedOrderId;
+      // Don't set paymentStatus here - it will default to "Pending"
+      // Payment will be marked as "Succeeded" only after successful payment
 
       if (payload?.discountCode) {
         const coupan = await Coupon.findOne({ code: payload?.discountCode });
@@ -727,20 +768,8 @@ module.exports = {
       console.log("newOrder", newOrder);
       await newOrder.save();
 
-      await Promise.all(
-        payload.productDetail.map(async (productItem) => {
-          await Product.findByIdAndUpdate(
-            productItem.product,
-            {
-              $inc: {
-                sold_pieces: productItem.qty,
-                Quantity: -productItem.qty, // Decrease available quantity
-              },
-            },
-            { new: true }
-          );
-        })
-      );
+      // DON'T update inventory yet - wait for payment confirmation
+      // Inventory will be updated when payment is successful
 
       // Send email notification (non-blocking)
       try {
@@ -753,20 +782,7 @@ module.exports = {
         // Continue without failing the order
       }
 
-      // Send push notification (non-blocking) - only for logged-in users
-      if (payload.user) {
-        try {
-          await notify(
-            req.body.user,
-            "Order Placed",
-            `Your order with ID ${newOrder.orderId} has been received.`,
-            newOrder.orderId
-          );
-        } catch (notifyError) {
-          console.error("Push notification failed:", notifyError.message);
-          // Continue without failing the order
-        }
-      }
+      // DON'T send push notification yet - wait for payment confirmation
 
       return response.ok(res, {
         message: "Product request added successfully",
@@ -2017,10 +2033,8 @@ module.exports = {
 
       const cond = {
         user: req.user.id,
-        $or: [
-          { paymentStatus: { $in: ["Succeeded", "Paid", "Pending"] } },
-          { paymentStatus: { $exists: false } },
-        ],
+        // Only show orders with successful payment
+        paymentStatus: "Succeeded"
       };
 
       const products = await ProductRequest.find(cond)
