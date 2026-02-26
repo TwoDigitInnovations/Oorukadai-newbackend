@@ -353,4 +353,94 @@ module.exports = {
       });
     }
   },
+
+  // Direct Order Placement without Payment Gateway
+  directOrderPlacement: async (req, res) => {
+    try {
+      const { orderID } = req.body;
+
+      if (!orderID) {
+        return response.error(res, { message: "Order ID is required" });
+      }
+
+      const order = await ProductRequest.findOne({ orderId: orderID });
+      if (!order) {
+        return response.error(res, { message: "Order not found" });
+      }
+
+      if (order.paymentStatus === "Succeeded") {
+        return response.ok(res, {
+          success: true,
+          message: "Order already processed",
+          order: order,
+        });
+      }
+
+      // Mark order as succeeded without payment
+      order.paymentStatus = "Succeeded";
+      order.paymentGateway = "Direct Order (No Payment)";
+      order.currency = "INR";
+
+      // Update product quantities
+      await Promise.all(
+        order.productDetail.map(async (productItem) => {
+          await Product.findByIdAndUpdate(
+            productItem.product,
+            {
+              $inc: {
+                sold_pieces: productItem.qty,
+                Quantity: -productItem.qty,
+              },
+            },
+            { new: true }
+          );
+        })
+      );
+
+      await order.save();
+
+      // Send notifications
+      if (order.user) {
+        try {
+          const user = await User.findById(order.user);
+          if (user) {
+            await mailNotification.order({
+              email: user.email,
+              orderId: order.orderId,
+            });
+
+            await notify(
+              user,
+              "Order Placed",
+              `Your order with ID ${order.orderId} has been received.`,
+              order.orderId
+            );
+          }
+        } catch (notifError) {
+          console.error("Notification error:", notifError.message);
+        }
+      } else if (order.guestEmail) {
+        try {
+          await mailNotification.order({
+            email: order.guestEmail,
+            orderId: order.orderId,
+          });
+        } catch (emailError) {
+          console.error("Guest email error:", emailError.message);
+        }
+      }
+
+      return response.ok(res, {
+        success: true,
+        message: "Order placed successfully",
+        order: order,
+      });
+    } catch (error) {
+      console.error("Direct Order Placement Error:", error);
+      return response.error(res, {
+        message: "Error placing order",
+        error: error.message,
+      });
+    }
+  },
 };

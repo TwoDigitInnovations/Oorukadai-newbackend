@@ -753,7 +753,8 @@ router.post(
   stripe.NewRetrieveCheckout
 );
 
-// PhonePe Payment Routes
+// PhonePe Payment Routes - COMMENTED OUT
+/*
 router.post(
   "/phonepe-initiate",
   optionalAuth,
@@ -772,6 +773,14 @@ router.post(
   "/phonepe-cancel",
   optionalAuth,
   phonepe.cancelPhonePePayment
+);
+*/
+
+// Direct Order Placement without Payment Gateway
+router.post(
+  "/direct-order-placement",
+  optionalAuth,
+  phonepe.directOrderPlacement
 );
 
 module.exports = router;
